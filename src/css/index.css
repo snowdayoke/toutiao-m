@@ -13,3 +13,12 @@
 .icon-bofang:before {
   content: "\e624";
 }
+body {
+  background-color: #f5f7f9;
+}
+.pages-nav-bar {
+  background-color: #3296fa !important;
+}
+.pages-nav-bar .van-nav-bar__title {
+  color: #fff !important;
+}
