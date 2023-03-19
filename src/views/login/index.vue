@@ -1,7 +1,9 @@
 <template>
   <div class="login-container">
     <!-- 导航栏 -->
-    <van-nav-bar class="pages-nav-bar" title="登录"/>
+    <van-nav-bar class="pages-nav-bar" title="登录">
+      <van-icon slot="left" name="cross" @click="$router.back()"/>
+    </van-nav-bar>
     <!-- 登录的表单 -->
     <!--
       1.给van-field组件配置rules验证规则
@@ -92,6 +94,9 @@ export default {
         const { data } = await reqLogin(user)
         this.$store.commit('SETUSER', data.data)
         this.$toast.success('登陆成功')
+        // 登陆成功之后，跳转回原来的页面
+        // back 的方式不严谨，后面将功能优化的时候再说
+        this.$router.back()
       } catch (err) {
         if (err.response.status === 400) {
           this.$toast.fail('手机号或验证码错误')

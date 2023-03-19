@@ -1,13 +1,26 @@
 <template>
-  <div>
+  <div class="layout-container">
     <!-- 子路由出口 -->
     <router-view></router-view>
     <!-- 标签导航栏 -->
-    <van-tabbar v-model="active">
-        <van-tabbar-item icon="home-o" to="/">首页</van-tabbar-item>
-        <van-tabbar-item icon="search" to="/qa">问答</van-tabbar-item>
-        <van-tabbar-item icon="friends-o" to="/video">视频</van-tabbar-item>
-        <van-tabbar-item icon="setting-o" to="my">我的</van-tabbar-item>
+    <!-- route 开启路由模式 -->
+    <van-tabbar class="layout-tabbar" v-model="active">
+        <van-tabbar-item to="/">
+          <i slot="icon" class="iconfont icon-shouye"></i>
+          <span class="text">首页</span>
+        </van-tabbar-item>
+        <van-tabbar-item to="/qa">
+          <i slot="icon" class="iconfont icon-wenda"></i>
+          <span class="text">问答</span>
+        </van-tabbar-item>
+        <van-tabbar-item to="/video">
+          <i slot="icon" class="iconfont icon-shipin"></i>
+          <span class="text">视频</span>
+        </van-tabbar-item>
+        <van-tabbar-item to="my">
+          <i slot="icon" class="iconfont icon-wode"></i>
+          <span class="text">{{ $store.state.user ? '我的' : '未登录' }}</span>
+        </van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
@@ -23,6 +36,15 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less">
+  .layout-container {
+    .layout-tabbar {
+      i.iconfont {
+       font-size: 40px;
+      }
+      span.text {
+        font-size: 20px;
+      }
+    }
+  }
 </style>
