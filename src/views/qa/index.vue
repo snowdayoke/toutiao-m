@@ -1,5 +1,5 @@
 <template>
-    <div>问答</div>
+    <div>问答开发中~~~</div>
 </template>
 
 <script>

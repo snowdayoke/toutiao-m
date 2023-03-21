@@ -55,8 +55,8 @@ export default {
   data () {
     return {
       user: {
-        mobile: '',
-        code: ''
+        mobile: '15866666666',
+        code: '246810'
       },
       userFormRules: {
         mobile: [{
@@ -84,6 +84,7 @@ export default {
       const user = this.user
       // 2.表单验证
 
+      // 展示登录中 loading
       this.$toast.loading({
         message: '登录中...',
         forbidClick: true, // 禁用背景点击

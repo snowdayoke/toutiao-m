@@ -31,3 +31,38 @@ export const reqUserChannels = () => request({
   url: 'v1_0/user/channels',
   method: 'GET'
 })
+
+// 关注用户
+export const reqAddFollow = (target) => request({
+  url: 'v1_0/user/followings',
+  method: 'POST',
+  data: {
+    target
+  }
+})
+
+// 取消关注用户
+export const reqDeleteFollow = (target) => request({
+  url: `v1_0/user/followings/${target}`,
+  method: 'DELETE'
+})
+
+// 获取用户个人资料
+export const reqUserProfile = () => request({
+  url: 'v1_0/user/profile',
+  method: 'GET'
+})
+
+// 编辑用户个人资料
+export const reqUpdateUserProfile = (data) => request({
+  url: 'v1_0/user/profile',
+  method: 'PATCH',
+  data
+})
+
+// 更新用户照片资料
+export const reqUpdateUserPhoto = (data) => request({
+  url: 'v1_0/user/photo',
+  method: 'PATCH',
+  data
+})

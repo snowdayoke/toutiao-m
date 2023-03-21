@@ -48,7 +48,9 @@
 </template>
 
 <script>
-import { reqAllChannels } from '@/api/channel'
+import { reqAllChannels, reqAddUserChannels, reqDeleteUserChannels } from '@/api/channel'
+import { mapState } from 'vuex'
+import { setItem } from '@/utils/storage'
 
 export default {
   name: 'ChannelEdit',
@@ -64,6 +66,7 @@ export default {
     this.loadAllChannels()
   },
   computed: {
+    ...mapState(['user']),
     myChannelList () {
       return this.myChannels
     },
@@ -88,17 +91,55 @@ export default {
       }
     },
     // 点击添加到 我的频道
-    onAddChannel (channel) {
+    async onAddChannel (channel) {
       this.myChannelList.push(channel)
+      if (this.user) {
+        //  数据持久化处理
+        // 已登录，把数据请求接口放到线上
+        try {
+          await reqAddUserChannels({
+            id: channel.id,
+            seq: this.myChannelList.length // 序号
+          })
+        } catch (error) {
+          this.$toast('保存失败，请稍后重试')
+        }
+      } else {
+        // 未登录，把数据存储到本地
+        setItem('TOUTIAO_CHANNELS', this.myChannelList)
+      }
     },
     // 我的频道项 点击事件
     onMyChannelsClick (channel, index) {
       if (this.isEdit) {
+        if (this.fixChannels.includes(channel.id)) {
+          return
+        }
         // 编辑状态，执行删除频道
+        // 如果删除的激活频道之前的频道，则更新激活的频道项active
+        if (index <= this.active) {
+          this.$emit('update-active', this.active - 1, true)
+        }
         this.myChannelList.splice(index, 1)
+        // 持久化
+        this.deleteChannel(channel)
       } else {
         // 非编辑状态，执行切换频道
-        this.$emit('update-active', index)
+        this.$emit('update-active', index, false)
+      }
+    },
+    // 删除频道持久化
+    async deleteChannel (channel) {
+      if (this.user) {
+        //  已登录，把数据更新到线上
+        try {
+          await reqDeleteUserChannels(channel.id)
+        } catch (error) {
+          this.$toast('删除失败，请稍后重试')
+        }
+      } else {
+        // 未登录，将数据更新到本地
+        setItem('TOUTIAO_CHANNELS', this.myChannelList)
       }
     }
   }

@@ -4,6 +4,7 @@
     <van-nav-bar class="pages-nav-bar" fixed>
       <van-button slot="title" round type="info" icon="search" size="small"
       class="search-btn"
+      to="/search"
       >搜索</van-button>
     </van-nav-bar>
     <!-- 频道列表 -->
@@ -42,6 +43,9 @@
 import { reqUserChannels } from '@/api/user'
 import ArticleList from './components/article-list.vue'
 import ChannelEdit from './components/channel-edit.vue'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storage'
+
 export default {
   name: 'HomeIndex',
   components: { ArticleList, ChannelEdit },
@@ -55,20 +59,39 @@ export default {
   created () {
     this.loadChannels()
   },
+  computed: {
+    ...mapState(['user'])
+  },
   methods: {
     // 获取用户频道列表
     async loadChannels () {
       try {
-        const { data } = await reqUserChannels()
-        this.channels = data.data.channels
+        let channels = []
+        if (this.user) {
+          // 已登录，请求获取本地用户频道
+          const { data } = await reqUserChannels()
+          channels = data.data.channels
+        } else {
+          // 未登录，判断是否有本地的频道列表数据
+          const localChannels = getItem('TOUTIAO_CHANNELS')
+          // 有，拿来使用
+          if (localChannels) {
+            channels = localChannels
+          } else {
+            // 没有，请求获取默认频道列表
+            const { data } = await reqUserChannels()
+            channels = data.data.channels
+          }
+        }
+        this.channels = channels
       } catch (error) {
         this.$toast('加载失败，请稍后重试')
       }
     },
     // 频道编辑传递index的自定义事件回调
-    onUpdateActive (index) {
+    onUpdateActive (index, isChannelEditShow = true) {
       this.active = index
-      this.isChannelEditShow = false
+      this.isChannelEditShow = isChannelEditShow
     }
   }
 }
@@ -78,11 +101,11 @@ export default {
   .home-container {
     padding-bottom: 100px;
     padding-top: 174px;
-    .van-nav-bar__title {
+    .van-nav-bar__title .van-ellipsis {
       max-width: unset;
     }
     .search-btn {
-      width: 555px;
+      width: 450px;
       height: 64px;
       background-color: #5babfb;
       border: none;
